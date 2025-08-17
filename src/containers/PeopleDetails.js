@@ -51,18 +51,28 @@ function formatTableData({
       },
     });
 
-    // Create and push handleTermination function menu
-    data.push({
-      label: "End employment",
-      action: () => {
-        const originalEmployee = originalEmployeeData.get(empId);
-        if (originalEmployee) {
-          handleTermination(originalEmployee);
-        } else {
-          handleTermination(employee);
-        }
-      },
-    });
+    // Create and push handleTermination function menu only for active employees
+    // Don't show "End employment" option for already terminated employees
+    const isTerminated = employee.terminationReason || 
+                        employee.autoDeleteAt || 
+                        employee.terminationDate || 
+                        employee.isTerminated || 
+                        employee.status === 'terminated' ||
+                        employee.employmentStatus === 'terminated';
+    
+    if (!isTerminated) {
+      data.push({
+        label: "End employment",
+        action: () => {
+          const originalEmployee = originalEmployeeData.get(empId);
+          if (originalEmployee) {
+            handleTermination(originalEmployee);
+          } else {
+            handleTermination(employee);
+          }
+        },
+      });
+    }
 
     //If user has admin permission, show all functions. Otherwise, show only edit function
     return permissionId === 1 ? data : [data[0]];
