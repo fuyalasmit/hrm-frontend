@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Stack, Typography, Avatar, TableCell, Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from "@mui/material";
+import { Box, Stack, Typography, Avatar, TableCell, Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, Menu, MenuItem, ButtonGroup } from "@mui/material";
+import { DownloadOutlined, KeyboardArrowDown } from "@mui/icons-material";
 import dayjs from "dayjs";
 import AppTable from "../components/PeopleComponents/AppTable";
 import AppTabs from "../components/PeopleComponents/AppTabs";
@@ -220,6 +221,7 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showReRegisterModal, setShowReRegisterModal] = useState(false);
   const [employeeToReRegister, setEmployeeToReRegister] = useState(null);
+  const [downloadMenuAnchor, setDownloadMenuAnchor] = useState(null);
   // const [editEmployee, setEditEmployee] = useState(false);
   const navigate = useNavigate();
   const isAdmin = stateContext.state.user && stateContext.state.user.permission.id === 1;
@@ -399,6 +401,23 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
     handleEdit(original || selectedEmployee);
   };
 
+  // Download handlers
+  const handleDownloadMenuClick = (event) => {
+    setDownloadMenuAnchor(event.currentTarget);
+  };
+
+  const handleDownloadMenuClose = () => {
+    setDownloadMenuAnchor(null);
+  };
+
+  const handleDownloadDocument = (fileName) => {
+    const link = document.createElement('a');
+    link.href = `/${fileName}`;
+    link.download = fileName;
+    link.click();
+    handleDownloadMenuClose();
+  };
+
   return (
     <Stack sx={{ minWidth: window.innerWidth < 1550 ? 1100 : 1350 }}>
       <Box
@@ -416,26 +435,84 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
           People
         </Typography>
         {isAdmin && (
-          <Button
-            variant="contained"
-            disableElevation
-            onClick={(evt) => handleAddNewEmployee()}
-            sx={{
-              width: "166px",
-              height: "34px",
-              border: "1px solid #7F56D9",
-              backgroundColor: "#7F56D9",
-              fontSize: 13,
-              fontWeight: 400,
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#602ece",
-                border: "1px solid #602ece",
-              },
-            }}
-          >
-            Add new employee
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <ButtonGroup variant="contained" disableElevation>
+              <Button
+                startIcon={<DownloadOutlined />}
+                onClick={handleDownloadMenuClick}
+                sx={{
+                  height: "34px",
+                  border: "1px solid #D0D5DD",
+                  backgroundColor: "#FFFFFF",
+                  color: "#475467",
+                  fontSize: 13,
+                  fontWeight: 400,
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "#F9FAFB",
+                    border: "1px solid #D0D5DD",
+                  },
+                }}
+              >
+                Download Forms
+              </Button>
+              <Button
+                size="small"
+                onClick={handleDownloadMenuClick}
+                sx={{
+                  width: "32px",
+                  minWidth: "32px",
+                  height: "34px",
+                  border: "1px solid #D0D5DD",
+                  borderLeft: "none",
+                  backgroundColor: "#FFFFFF",
+                  color: "#475467",
+                  "&:hover": {
+                    backgroundColor: "#F9FAFB",
+                    border: "1px solid #D0D5DD",
+                    borderLeft: "none",
+                  },
+                }}
+              >
+                <KeyboardArrowDown />
+              </Button>
+            </ButtonGroup>
+            <Menu
+              anchorEl={downloadMenuAnchor}
+              open={Boolean(downloadMenuAnchor)}
+              onClose={handleDownloadMenuClose}
+              MenuListProps={{
+                'aria-labelledby': 'download-button',
+              }}
+            >
+              <MenuItem onClick={() => handleDownloadDocument('contractpaper.docx')}>
+                Contract Paper (DOCX)
+              </MenuItem>
+              <MenuItem onClick={() => handleDownloadDocument('NewEmployeeForm.pdf')}>
+                New Employee Form (PDF)
+              </MenuItem>
+            </Menu>
+            <Button
+              variant="contained"
+              disableElevation
+              onClick={(evt) => handleAddNewEmployee()}
+              sx={{
+                width: "166px",
+                height: "34px",
+                border: "1px solid #7F56D9",
+                backgroundColor: "#7F56D9",
+                fontSize: 13,
+                fontWeight: 400,
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#602ece",
+                  border: "1px solid #602ece",
+                },
+              }}
+            >
+              Add new employee
+            </Button>
+          </Box>
         )}
       </Box>
 
