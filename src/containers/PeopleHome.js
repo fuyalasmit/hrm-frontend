@@ -87,6 +87,7 @@ function PeopleHome() {
     // Clear cached data to ensure fresh data on return
     stateContext.updateState("pdEmployees", null);
     stateContext.updateState("pdMyTeam", null);
+    stateContext.updateState("pdTerminated", null);
 
     setOpenEndEmployment(true);
     setSelectedEmployee(data);

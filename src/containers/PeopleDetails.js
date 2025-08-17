@@ -247,14 +247,36 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
         if (stateContext.state.pdEmployees) {
           // Create fresh copy of data to avoid mutation issues
           const employeesCopy = JSON.parse(JSON.stringify(stateContext.state.pdEmployees));
-          const freshParams = { ...params, data: employeesCopy };
+          
+          // Filter out terminated employees from cached data as well
+          const activeEmployees = employeesCopy.filter(emp => 
+            !emp.terminationReason && 
+            !emp.autoDeleteAt && 
+            !emp.terminationDate && 
+            !emp.isTerminated && 
+            emp.status !== 'terminated' &&
+            emp.employmentStatus !== 'terminated'
+          );
+          
+          const freshParams = { ...params, data: activeEmployees };
           formatTableData(freshParams);
           setEmployees(freshParams.data);
           setLoading(false);
         } else {
           const res = await api.employee.fetchAll();
           setLoading(false);
-          const freshParams = { ...params, data: res };
+          
+          // Filter out terminated employees from the main employees list
+          const activeEmployees = res.filter(emp => 
+            !emp.terminationReason && 
+            !emp.autoDeleteAt && 
+            !emp.terminationDate && 
+            !emp.isTerminated && 
+            emp.status !== 'terminated' &&
+            emp.employmentStatus !== 'terminated'
+          );
+          
+          const freshParams = { ...params, data: activeEmployees };
           formatTableData(freshParams);
           setEmployees(freshParams.data);
           stateContext.updateState("pdEmployees", freshParams.data);
@@ -306,7 +328,14 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
 
   const handleRowClick = (row) => {
     // Don't allow viewing profile for terminated employees
-    if (row.terminationReason || row.autoDeleteAt) {
+    // Check for various termination indicators
+    if (row.terminationReason || 
+        row.autoDeleteAt || 
+        row.terminationDate || 
+        row.isTerminated || 
+        row.status === 'terminated' ||
+        row.employmentStatus === 'terminated') {
+      console.log('Blocked viewing details for terminated employee:', row.firstName, row.lastName);
       return; // Do nothing for terminated employees
     }
     setSelectedEmployee(row);
