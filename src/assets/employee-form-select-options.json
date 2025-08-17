@@ -1,0 +1,80 @@
+{
+  "employmentType": [
+    "",
+    "Apprenticeship",
+    "Casual employment",
+    "Contingent employment",
+    "Contract employment",
+    "Employment on commission",
+    "Full-time employment",
+    "Internship",
+    "Leased employment",
+    "Part-time employment",
+    "Probation",
+    "Seasonal employment",
+    "Traineeship",
+    "Permanent employment"
+  ],
+  "compensationType": [
+    "",
+    "Bonuses",
+    "Hourly compensation",
+    "Salary",
+    "Salary & commission",
+    "Total compensation"
+  ],
+  "position": [
+    "",
+    "Professor",
+    "Associate Professor",
+    "Assistant Professor",
+    "Lecturer",
+    "Senior Instructor",
+    "Instructor",
+    "Assistant Instructor",
+    "Staff"
+  ],
+  "post": [
+    "",
+    "Morning Coordinator",
+    "HOD",
+    "DHOD",
+    "Coordinator",
+    "Assistant Dean (IOE)",
+    "Assistant Director (CARD)",
+    "Director (CIT)",
+    "IC Chair",
+    "Coordinator (MsDSA)",
+    "Coordinator (MsCSKE)",
+    "Coordinator (MsICE)",
+    "Coordinator (MsNCS)"
+  ],
+  "maritalStatus": [
+    "",
+    "Married",
+    "Single",
+    "Divorced",
+    "Registered Partnership",
+    "Separated"
+  ],
+  "gender": [
+    "",
+    "Agender",
+    "Cisgender",
+    "Female",
+    "Gender neutral",
+    "Genderfluid",
+    "Male",
+    "Nonbinary",
+    "Pangender",
+    "Transgender",
+    "Other"
+  ],
+  "degreeTypes": [
+    "",
+    "PhD",
+    "Masters", 
+    "Bachelors",
+    "+2"
+  ]
+}

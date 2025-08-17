@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Professor",
+    "selected": false
+  },
+  {
+    "name": "Associate Professor",
+    "selected": false
+  },
+  {
+    "name": "Assistant Professor",
+    "selected": false
+  },
+  {
+    "name": "Lecturer",
+    "selected": false
+  },
+  {
+    "name": "Senior Instructor",
+    "selected": false
+  },
+  {
+    "name": "Instructor",
+    "selected": false
+  },
+  {
+    "name": "Assistant Instructor",
+    "selected": false
+  },
+  {
+    "name": "Staff",
+    "selected": false
+  }
+]
