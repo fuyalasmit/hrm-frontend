@@ -46,7 +46,9 @@ export default function UserDropdown({ style }) {
           atob(stateContext.state.employee.photo.toString("base64"))
         : null,
     name: stateContext.state.user
-      ? `${stateContext.state.user.firstName} ${stateContext.state.user.lastName}`
+      ? stateContext.state.user.firstName === stateContext.state.user.lastName
+        ? stateContext.state.user.firstName
+        : `${stateContext.state.user.firstName} ${stateContext.state.user.lastName}`
       : "Unknown",
     role:
       stateContext.state.user && stateContext.state.user.permission
