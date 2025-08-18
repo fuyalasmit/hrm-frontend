@@ -176,12 +176,12 @@ export default function SideMenu({ style, onSelect }) {
       <Box>
         <Divider />
         <CustomizedListItem
-          primary={"Support"}
+          primary={"User Manual"}
           menuItem={"support"}
           index={8}
           selected={selectedIndex === 8}
           handleListItemClick={() => {
-            window.open('https://github.com/bluewave-labs/bluewave-hrm', '_blank');
+            window.open('https://aadeshmndr.github.io/Manual-for-HRM/manual_for_hrm.pdf', '_blank');
           }}
           style = {{height: "64px", marginLeft: "32px"}}
         />
