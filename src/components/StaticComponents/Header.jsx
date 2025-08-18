@@ -26,9 +26,7 @@ export default function Header({ window, style }) {
 
   const stateContext = useContext(StateContext);
 
-  const showOnboardingButton =
-    stateContext.state.employee &&
-    !stateContext.state.employee.completedOnboardingAt;
+  const showOnboardingButton = stateContext.state.employee && !stateContext.state.employee.completedOnboardingAt;
   return (
     <Box
       className={trigger ? "scrolled" : ""}
@@ -54,14 +52,25 @@ export default function Header({ window, style }) {
       }}
     >
       {showOnboardingButton && (
-        <HRMButton
-          mode="primary"
-          onClick={() => navigate("/onboarding", { replace: true })}
-          style={{ marginRight: "40px" }}
-        >
+        <HRMButton mode="primary" onClick={() => navigate("/onboarding", { replace: true })} style={{ marginRight: "40px" }}>
           Complete onboarding
         </HRMButton>
       )}
+      <HRMButton
+        mode="secondaryA"
+        onClick={() => {
+          const link = document.createElement("a");
+          link.href = "http://hrm.itclub.asmitphuyal.com.np/viewemployees";
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }}
+        style={{ marginRight: "25px" }}
+      >
+        Public View
+      </HRMButton>
       <UserDropdown />
     </Box>
   );
