@@ -740,7 +740,7 @@ function EmployeeForm({ employee, restricted, onDiscard, onSave }) {
         <Stack spacing={5} sx={{ border: "0px blue solid", width: "100%", minWidth: "100%" }}>
           {/* Personal Information container begins here */}
           <Stack spacing={2.5} sx={containerStyle}>
-            {createSubHead("Personal")}
+            {createSubHead("Personal Details")}
             <RowStack>
               <CustomisedInput
                 label={"First name"}
@@ -886,7 +886,7 @@ function EmployeeForm({ employee, restricted, onDiscard, onSave }) {
 
           {/* Contact Information container begins here */}
           <Stack spacing={2.5} sx={containerStyle}>
-            {createSubHead("Job")}
+            {createSubHead("Contact Information")}
             <RowStack>
               <CustomisedInput
                 label={"Mobile"}
@@ -1008,7 +1008,7 @@ function EmployeeForm({ employee, restricted, onDiscard, onSave }) {
 
           {/* Job Information container begins here */}
           <Stack spacing={2.5} sx={containerStyle}>
-            {createSubHead("Job")}
+            {createSubHead("Job Details")}
             <RowStack>
               <CustomisedDatePicker
                 label={"Hire date"}
