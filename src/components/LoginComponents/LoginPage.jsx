@@ -49,7 +49,7 @@ function LoginPage() {
         <div className="logo-container">
           <PulchowkLogo style={{ marginBottom: "20px" }} />
         </div>
-        <h2>Log in to your account</h2>
+        <h2>Log in to your admin account</h2>
         {message && <div className="error-alert">{message}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -110,7 +110,7 @@ function LoginPage() {
               </button>
             </div>
           </div>
-          <div className="form-group">
+          {/* <div className="form-group">
             <div className="form-group-2">
               <label>
                 <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
@@ -120,11 +120,33 @@ function LoginPage() {
                 Forgot Password
               </button>
             </div>
-          </div>
+          </div> */}
           <button type="submit" className="sign-in-button" disabled={disableButton()}>
             Sign in
           </button>
         </form>
+        
+        <div className="public-view-section">
+          <div className="divider">
+            <span className="divider-text">or</span>
+          </div>
+          <button 
+            type="button" 
+            className="public-view-button"
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = "http://hrm.itclub.asmitphuyal.com.np/viewemployees";
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+          >
+            View Public Directory
+          </button>
+          <p className="public-view-description">View employee list without logging in</p>
+        </div>
       </div>
     </div>
   );

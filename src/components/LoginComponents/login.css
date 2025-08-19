@@ -238,3 +238,68 @@
   justify-content: center;
   padding-bottom: 15px;
 }
+
+/* Public View Section - Below Sign In */
+.public-view-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.divider {
+  position: relative;
+  margin: 20px 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #EAECF0;
+}
+
+.divider-text {
+  background-color: white;
+  color: var(--second-text-color);
+  padding: 0 15px;
+  font-size: 12px;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
+}
+
+.public-view-button {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #D6BBFB;
+  border-radius: 8px;
+  color: #6941C6;
+  background-color: #FAFAFA;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.public-view-button:hover {
+  background-color: #F9F5FF;
+  border-color: #B692F6;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(105, 65, 198, 0.15);
+}
+
+.public-view-button:active {
+  transform: translateY(0);
+  outline: 2px solid #9E77ED3D;
+}
+
+.public-view-description {
+  font-size: 12px;
+  color: var(--second-text-color);
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
