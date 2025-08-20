@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, Stack, Typography, Avatar, TableCell, Button, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, Menu, MenuItem, ButtonGroup } from "@mui/material";
-import { DownloadOutlined, KeyboardArrowDown } from "@mui/icons-material";
+import { DownloadOutlined, KeyboardArrowDown, Download } from "@mui/icons-material";
 import dayjs from "dayjs";
 import AppTable from "../components/PeopleComponents/AppTable";
 import AppTabs from "../components/PeopleComponents/AppTabs";
@@ -160,7 +160,7 @@ function formatTableData({
     }
   });
 }
-const tabItems = ({ isAdmin, loading, showActionHeader, employees, headCells, hasTeam, team, terminated, handleRowClick, handleTerminatedRowClick }) => {
+const tabItems = ({ isAdmin, loading, showActionHeader, employees, headCells, hasTeam, team, terminated, handleRowClick, handleTerminatedRowClick, onFilteredDataChange }) => {
   const tabs = [
     {
       label: "Employees",
@@ -173,6 +173,7 @@ const tabItems = ({ isAdmin, loading, showActionHeader, employees, headCells, ha
           loading={loading}
           showActionHeader={showActionHeader}
           handleRowClick={handleRowClick}
+          onFilteredDataChange={onFilteredDataChange}
         />
       ),
     },
@@ -226,6 +227,7 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
   const [employees, setEmployees] = useState([]);
   const [myTeam, setMyTeam] = useState([]);
   const [terminated, setTerminated] = useState([]);
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewDetails, setViewDetails] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -427,6 +429,11 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
     setEmployeeToReRegister(null);
   };
 
+  // Handle filtered data changes from AppTable
+  const handleFilteredDataChange = (filteredData) => {
+    setFilteredEmployees(filteredData);
+  };
+
   const handleGoBack = () => {
     setViewDetails(false);
     setSelectedEmployee(null);
@@ -457,6 +464,194 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
     handleDownloadMenuClose();
   };
 
+  // Function to generate and download filtered employee report
+  const generateFilteredEmployeeReport = async () => {
+    try {
+      // Get the current filtered data from AppTable
+      const currentData = filteredEmployees.length > 0 ? filteredEmployees : employees; // Use filtered data if available, fallback to all employees
+      
+      // Fetch all necessary data for summary statistics
+      const [allEmployees, terminatedEmployees, departmentSummary] = await Promise.all([
+        api.employee.fetchAll(),
+        api.employee.fetchTerminated(),
+        api.employee.fetchSummaryByDepartments()
+      ]);
+
+      // Calculate summary statistics
+      const reportDate = new Date().toLocaleDateString();
+      const reportTime = new Date().toLocaleTimeString();
+      
+      // Employment type breakdown for all employees
+      const employmentTypes = {};
+      allEmployees.forEach((emp) => {
+        if (emp.employmentType) {
+          const type = emp.employmentType;
+          employmentTypes[type] = (employmentTypes[type] || 0) + 1;
+        }
+      });
+
+      // Contract employees
+      const contractEmployees = allEmployees.filter(
+        (emp) =>
+          emp.employmentType &&
+          (emp.employmentType.toLowerCase().includes("contract") || 
+           emp.employmentType.toLowerCase().includes("commission"))
+      ).length;
+
+      // Full-time and part-time employees
+      const fullTimeEmployees = allEmployees.filter(
+        (emp) => emp.employmentType && emp.employmentType.toLowerCase().includes("full-time")
+      ).length;
+
+      const partTimeEmployees = allEmployees.filter(
+        (emp) => emp.employmentType && emp.employmentType.toLowerCase().includes("part-time")
+      ).length;
+
+      // Recent hires (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const recentHires = allEmployees.filter(
+        (emp) => emp.hireDate && new Date(emp.hireDate) >= thirtyDaysAgo
+      ).length;
+
+      // Contracts ending soon (next 60 days)
+      const sixtyDaysFromNow = new Date();
+      sixtyDaysFromNow.setDate(sixtyDaysFromNow.getDate() + 60);
+      const contractsEndingSoon = allEmployees.filter((emp) => {
+        if (!emp.employmentType || !emp.contractExpiryDate) return false;
+        const isContractEmployee =
+          emp.employmentType.toLowerCase().includes("contract") || 
+          emp.employmentType.toLowerCase().includes("commission");
+        if (!isContractEmployee) return false;
+        const expiryDate = new Date(emp.contractExpiryDate);
+        const today = new Date();
+        return expiryDate >= today && expiryDate <= sixtyDaysFromNow;
+      });
+
+      // Generate CSV content with filtered data
+      const csvContent = generateFilteredCSVReport({
+        reportDate,
+        reportTime,
+        totalEmployees: allEmployees.length,
+        filteredEmployees: currentData,
+        terminatedEmployees: terminatedEmployees.length,
+        contractEmployees,
+        fullTimeEmployees,
+        partTimeEmployees,
+        recentHires,
+        contractsEndingSoon: contractsEndingSoon.length,
+        employmentTypes,
+        departmentBreakdown: departmentSummary
+      });
+
+      // Download the report
+      downloadCSV(csvContent, `HRM_Filtered_Employee_Report_${new Date().toISOString().split('T')[0]}.csv`);
+
+    } catch (error) {
+      console.error("Error generating report:", error);
+      alert("Error generating report. Please try again.");
+    }
+  };
+
+  // Function to generate CSV content for filtered data
+  const generateFilteredCSVReport = (data) => {
+    let csv = "HRM Employee Report\n";
+    csv += `Generated on: ${data.reportDate} at ${data.reportTime}\n`;
+    csv += `Report contains ${data.filteredEmployees.length} employees (after filters applied)\n\n`;
+    
+    // Summary Statistics (for entire organization)
+    csv += "ORGANIZATION SUMMARY STATISTICS\n";
+    csv += "Category,Count\n";
+    csv += `Total Active Employees,${data.totalEmployees}\n`;
+    csv += `Terminated Employees,${data.terminatedEmployees}\n`;
+    csv += `Contract Employees,${data.contractEmployees}\n`;
+    csv += `Full-time Employees,${data.fullTimeEmployees}\n`;
+    csv += `Part-time Employees,${data.partTimeEmployees}\n`;
+    csv += `Recent Hires (Last 30 days),${data.recentHires}\n`;
+    csv += `Contracts Ending Soon (Next 60 days),${data.contractsEndingSoon}\n\n`;
+
+    // Employment Types Breakdown (for entire organization)
+    csv += "EMPLOYMENT TYPES BREAKDOWN (Organization)\n";
+    csv += "Employment Type,Count\n";
+    Object.entries(data.employmentTypes).forEach(([type, count]) => {
+      csv += `"${type}",${count}\n`;
+    });
+    csv += "\n";
+
+    // Department Breakdown (for entire organization)
+    csv += "DEPARTMENT BREAKDOWN (Organization)\n";
+    csv += "Department,Employee Count\n";
+    data.departmentBreakdown.forEach(dept => {
+      csv += `"${dept.departmentName}",${dept.count}\n`;
+    });
+    csv += "\n";
+
+    // Filtered Employees Details - only show columns that are visible in the table
+    csv += `FILTERED EMPLOYEES DETAILS (${data.filteredEmployees.length} employees)\n`;
+    
+    // Get the visible columns from headCells, excluding department and action
+    const visibleColumns = headCells.filter(cell => cell.visible && cell.id !== 'action' && cell.id !== 'department');
+    const columnHeaders = visibleColumns.map(cell => cell.label).join(',');
+    csv += `${columnHeaders}\n`;
+    
+    // Add employee data based on visible columns
+    data.filteredEmployees.forEach(emp => {
+      const rowData = visibleColumns.map(cell => {
+        let value = emp[cell.id];
+        
+        // Handle different data types and formatting
+        if (cell.id === 'name') {
+          value = `${emp.firstName} ${emp.lastName}`;
+        } else if (cell.id === 'department' && emp.department) {
+          value = emp.department.departmentName;
+        } else if (cell.id === 'role' && emp.role) {
+          value = emp.role.roleTitle;
+        } else if (cell.id === 'manager' && emp.Manager) {
+          value = `${emp.Manager.firstName} ${emp.Manager.lastName}`;
+        } else if (cell.id === 'hireDate' && emp.hireDate) {
+          value = new Date(emp.hireDate).toLocaleDateString();
+        } else if (cell.id === 'dateOfBirth' && emp.dateOfBirth) {
+          value = new Date(emp.dateOfBirth).toLocaleDateString();
+        } else if (cell.id === 'salary' && emp.salary) {
+          value = Number(emp.salary).toLocaleString();
+        }
+        
+        // Clean and format the value for CSV
+        if (value === null || value === undefined) {
+          return 'N/A';
+        }
+        
+        // Escape quotes and wrap in quotes if contains comma
+        const stringValue = String(value);
+        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+          return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        
+        return stringValue;
+      });
+      
+      csv += `${rowData.join(',')}\n`;
+    });
+
+    return csv;
+  };
+
+  // Function to download CSV file
+  const downloadCSV = (csvContent, fileName) => {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <Stack sx={{ minWidth: window.innerWidth < 1550 ? 1100 : 1350 }}>
       <Box
@@ -475,6 +670,24 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
         </Typography>
         {isAdmin && (
           <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              startIcon={<Download />}
+              onClick={generateFilteredEmployeeReport}
+              sx={{
+                height: "34px",
+                backgroundColor: "#7F56D9",
+                color: "#FFFFFF",
+                fontSize: 13,
+                fontWeight: 400,
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#6941C6",
+                },
+              }}
+            >
+              Download Report
+            </Button>
             <ButtonGroup variant="contained" disableElevation>
               <Button
                 startIcon={<DownloadOutlined />}
@@ -613,6 +826,7 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
               terminated,
               handleRowClick,
               handleTerminatedRowClick,
+              onFilteredDataChange: handleFilteredDataChange,
             })}
           />
         )}

@@ -384,6 +384,7 @@ data: An array of data objects to be displayed.
 The cells property of the object is for formatting the TableCell Component. 
 The properties of the object should match the values of the id property of 
 the headCells.
+onFilteredDataChange: Callback function to pass filtered data to parent component
  * @returns  {ReactNode} A Stack React element.
  */
 export default function AppTable(props) {
@@ -396,6 +397,7 @@ export default function AppTable(props) {
     loading,
     showActionHeader,
     handleRowClick,
+    onFilteredDataChange,
   } = props;
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
@@ -494,7 +496,11 @@ export default function AppTable(props) {
 
   useEffect(() => {
     setDataSize(filteredData.length);
-  }, [filteredData.length, loading]);
+    // Pass filtered data to parent component if callback is provided
+    if (onFilteredDataChange) {
+      onFilteredDataChange(filteredData);
+    }
+  }, [filteredData.length, loading, onFilteredDataChange, filteredData]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
