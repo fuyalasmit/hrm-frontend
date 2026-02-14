@@ -6,13 +6,13 @@ RUN npm install -g pnpm
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json ./
+# Copy package files FIRST
+COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN pnpm install
+# Install dependencies (this layer will be cached)
+RUN pnpm install --frozen-lockfile
 
-# Copy application code
+# Copy application code AFTER
 COPY . .
 
 # Expose port
