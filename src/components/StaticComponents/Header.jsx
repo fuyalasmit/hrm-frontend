@@ -60,7 +60,7 @@ export default function Header({ window, style }) {
         mode="secondaryA"
         onClick={() => {
           const link = document.createElement("a");
-          link.href = "http://hrm.itclub.asmitphuyal.com.np/viewemployees";
+          link.href = "http://hrm.itprojects.pcampus.edu.np/viewemployees";
           link.target = "_blank";
           link.rel = "noopener noreferrer";
           document.body.appendChild(link);

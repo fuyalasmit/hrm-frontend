@@ -2,4 +2,4 @@
 
 A Human Resource Management system designed for departmental use.  
 
-Live URL: https://hrm.itclub.asmitphuyal.com.np/
+Live URL: https://hrm.itclub.asmitphuyal.com.np/ | https://hrm.itprojects.pcampus.edu.np/
