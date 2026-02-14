@@ -114,15 +114,30 @@ function formatTableData({
     return addActionMenu && key === "action" && permissionId < 3;
   };
 
-  data.forEach(async (emp) => {
+  data.forEach((emp) => {
     // Store original employee data before formatting for display
     originalEmployeeData.set(emp.empId, { ...emp });
 
     // Now format for display
     emp.name = `${emp.firstName} ${emp.lastName}`;
-    emp.role = emp.role && emp.role.roleTitle;
-    emp.team = emp.team && emp.team.teamName ? emp.team.teamName : "New Team"; // Added by Ankit: set default team name
-    emp.department = emp.department && emp.department.departmentName;
+    
+    // Handle role (idempotent)
+    if (emp.role && typeof emp.role === 'object') {
+      emp.role = emp.role.roleTitle;
+    }
+    
+    // Handle team (idempotent)
+    if (emp.team && typeof emp.team === 'object') {
+      emp.team = emp.team.teamName || "New Team";
+    } else if (!emp.team) {
+      emp.team = "New Team";
+    }
+    
+    // Handle department (idempotent)
+    if (emp.department && typeof emp.department === 'object') {
+      emp.department = emp.department.departmentName;
+    }
+    
     emp.manager = emp.Manager && `${emp.Manager.firstName} ${emp.Manager.lastName}`;
     emp.salary = Number(emp.salary).toLocaleString();
     emp.hireDate = emp.hireDate && dayjs(emp.hireDate).format("DD MMMM, YYYY");
@@ -603,9 +618,9 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
         if (cell.id === 'name') {
           value = `${emp.firstName} ${emp.lastName}`;
         } else if (cell.id === 'department' && emp.department) {
-          value = emp.department.departmentName;
+          value = typeof emp.department === 'object' ? emp.department.departmentName : emp.department;
         } else if (cell.id === 'role' && emp.role) {
-          value = emp.role.roleTitle;
+          value = typeof emp.role === 'object' ? emp.role.roleTitle : emp.role;
         } else if (cell.id === 'manager' && emp.Manager) {
           value = `${emp.Manager.firstName} ${emp.Manager.lastName}`;
         } else if (cell.id === 'hireDate' && emp.hireDate) {
