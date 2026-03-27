@@ -28,13 +28,14 @@ function MyInfoHome(props) {
       {!showForm && (
         <>
           <EmployeeSnackbar isOpen={alert.show} message={alert.message} />
-          <MyInfoMain onClickEdit={() => setShowForm(true)} />
+          <MyInfoMain onClickEdit={() => setShowForm(true)} isAdmin={false} />
         </>
       )}
       {showForm && (
         <EmployeeForm
           employee={{ ...state.employee }}
           restricted={true}
+          showSensitiveFields={false}
           onDiscard={() => setShowForm(false)}
           onSave={handleSave}
         />

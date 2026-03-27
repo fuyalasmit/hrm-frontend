@@ -35,7 +35,7 @@ const theme = createTheme({
 });
 
 
-function MyInfoJob({employee}) {
+function MyInfoJob({employee, isAdmin}) {
   return (
     <Box>
        <ThemeProvider theme={theme}>
@@ -63,14 +63,14 @@ function MyInfoJob({employee}) {
               </Grid>
             </ListItem>
           )}
-          {employee.role && employee.role.roleTitle && (
+          {employee.post && (
             <ListItem sx={{paddingLeft:'0px'}}>
               <Grid container spacing={-35}>
                 <Grid item xs={6}>
-                  <Typography variant="body1">Position:</Typography>
+                  <Typography variant="body1">Post:</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2">{employee.role.roleTitle}</Typography>
+                  <Typography variant="body2">{employee.post}</Typography>
                 </Grid>
               </Grid>
             </ListItem>
@@ -95,6 +95,42 @@ function MyInfoJob({employee}) {
               </Grid>
             </Grid>
           </ListItem>
+          {isAdmin && employee.ioeEmployeeId && (
+            <ListItem sx={{paddingLeft:'0px'}}>
+              <Grid container spacing={-35}>
+                <Grid item xs={6}>
+                  <Typography variant="body1">IOE Employee ID:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">{employee.ioeEmployeeId}</Typography>
+                </Grid>
+              </Grid>
+            </ListItem>
+          )}
+          {isAdmin && employee.tuEmployeeId && (
+            <ListItem sx={{paddingLeft:'0px'}}>
+              <Grid container spacing={-35}>
+                <Grid item xs={6}>
+                  <Typography variant="body1">TU Employee ID:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">{employee.tuEmployeeId}</Typography>
+                </Grid>
+              </Grid>
+            </ListItem>
+          )}
+          {isAdmin && employee.bankAccountNumber && (
+            <ListItem sx={{paddingLeft:'0px'}}>
+              <Grid container spacing={-35}>
+                <Grid item xs={6}>
+                  <Typography variant="body1">Bank Account Number:</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">{employee.bankAccountNumber}</Typography>
+                </Grid>
+              </Grid>
+            </ListItem>
+          )}
           </List>
         </Box>
        </ThemeProvider>

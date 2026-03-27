@@ -826,7 +826,7 @@ export default function People({ handleAddNewEmployee, handleEdit, handleSurvey,
             >
               Go back
             </Button>
-            <MyInfoMain employee={selectedEmployee} onClickEdit={handleEditFromDetails} />
+            <MyInfoMain employee={selectedEmployee} onClickEdit={handleEditFromDetails} isAdmin={isAdmin} />
           </Box>
         ) : (
           <AppTabs
