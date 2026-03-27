@@ -446,8 +446,10 @@ function DegreeInput({ degree, index, onChange, onRemove, validator }) {
   );
 }
 
-function EmployeeForm({ employee, restricted, onDiscard, onSave }) {
+function EmployeeForm({ employee, restricted, onDiscard, onSave, showSensitiveFields }) {
   const [inputs, setInputs] = useState(employee || {});
+  const canShowSensitiveFields =
+    !restricted && (typeof showSensitiveFields === "undefined" ? true : showSensitiveFields);
 
   const [validator, setValidator] = useState({});
   // array of department objects received from the backend
@@ -1083,6 +1085,36 @@ function EmployeeForm({ employee, restricted, onDiscard, onSave }) {
               />
               <Stack sx={{ width: "100%" }}></Stack>
             </RowStack>
+            {canShowSensitiveFields && (
+              <RowStack>
+                <CustomisedInput
+                  label={"IOE Employee ID"}
+                  name={"ioeEmployeeId"}
+                  value={inputs.ioeEmployeeId || ""}
+                  handleChange={handleChange}
+                  validator={validator}
+                />
+                <CustomisedInput
+                  label={"TU Employee ID"}
+                  name={"tuEmployeeId"}
+                  value={inputs.tuEmployeeId || ""}
+                  handleChange={handleChange}
+                  validator={validator}
+                />
+              </RowStack>
+            )}
+            {canShowSensitiveFields && (
+              <RowStack>
+                <CustomisedInput
+                  label={"Bank account number"}
+                  name={"bankAccountNumber"}
+                  value={inputs.bankAccountNumber || ""}
+                  handleChange={handleChange}
+                  validator={validator}
+                />
+                <Stack sx={{ width: "100%" }}></Stack>
+              </RowStack>
+            )}
             {/* Contract Expiry Date - Only show for Contract employment */}
             {inputs.employmentType === "Contract employment" && (
               <RowStack>

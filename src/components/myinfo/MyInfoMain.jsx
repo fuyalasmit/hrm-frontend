@@ -7,7 +7,7 @@ import { Box } from "@mui/material";
 import StateContext from "../../context/StateContext";
 import NoContentComponent from "../PeopleComponents/NoContentComponent";
 
-export default function MyInfoMain({style, onClickEdit, employee: DefaultEmployee}) {
+export default function MyInfoMain({style, onClickEdit, employee: DefaultEmployee, isAdmin}) {
   const {state} = useContext(StateContext);
   const employee = DefaultEmployee || state.employee;
 
@@ -51,7 +51,7 @@ export default function MyInfoMain({style, onClickEdit, employee: DefaultEmploye
           Edit
         </HRMButton>
       </Stack>
-      <MyInfoPersonCard key={employee.empId} employee={employee} />
+      <MyInfoPersonCard key={employee.empId} employee={employee} isAdmin={isAdmin} />
     </Box>
   );
 }

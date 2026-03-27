@@ -65,7 +65,7 @@ const StyledCardContent = styled(CardContent)(({ theme }) => ({
   padding: "32px 48px 48px 48px",
 }));
 
-function MyInfoPersonalCard({ employee }) {
+function MyInfoPersonalCard({ employee, isAdmin }) {
   const tabItems = [
     {
       label: "Personal",
@@ -79,7 +79,7 @@ function MyInfoPersonalCard({ employee }) {
       label: "Job",
       child: (
         <div>
-          <MyInfoJob key={employee.empId} employee={employee} />
+          <MyInfoJob key={employee.empId} employee={employee} isAdmin={isAdmin} />
         </div>
       ),
     },

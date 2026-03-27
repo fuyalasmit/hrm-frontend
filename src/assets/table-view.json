@@ -1,6 +1,12 @@
 {
   "admin": [
     { "id": "empId", "width": 50, "label": "Emp No", "visible": false },
+    {
+      "id": "ioeEmployeeId",
+      "width": 120,
+      "label": "IOE ID",
+      "visible": true
+    },
     { "id": "name", "width": 180, "label": "Name", "visible": true },
     {
       "id": "preferredName",

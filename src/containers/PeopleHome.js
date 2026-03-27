@@ -25,6 +25,9 @@ const getHomePath = (location) => {
 function PeopleHome() {
   const stateContext = useContext(StateContext);
   const location = useLocation();
+  const permissionId =
+    stateContext.state.user?.permission?.id || stateContext.state.user?.permissionId;
+  const canViewSensitiveFields = Number(permissionId) === 1;
   const [viewOnly, setViewOnly] = useState(true); // view by default
   const [selectedEmployee, setSelectedEmployee] = useState();
   const [alert, setAlert] = useState({ show: false });
@@ -152,6 +155,7 @@ function PeopleHome() {
       {!viewOnly && (
         <EmployeeForm
           employee={selectedEmployee}
+          showSensitiveFields={canViewSensitiveFields}
           onDiscard={() => {
             setViewOnly(true);
             setAlert({
